@@ -13,13 +13,12 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
   // fullWidth = false,
 }) => {
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col">
       <Navbar items={NAVBAR_ITEMS} />
       <main className="flex-1">
         <div
           className={`container mx-auto max-w-7xl px-4 md:px-6 lg:px-8 pb-12 mt-8`}
         >
-          {/* <AnimatedBackground /> */}
           {children || <Outlet />}
         </div>
       </main>

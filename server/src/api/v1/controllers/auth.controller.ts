@@ -65,54 +65,6 @@ export const AuthController = {
     }
   },
 
-  // login: async (context: RequestContext) => {
-  //   try {
-  //     const result = await context.withTransaction(async (session) => {
-  //       const { email, phoneNumber, password } = context.body;
-
-  //       if (email && phoneNumber) {
-  //         throw new AuthenticationError(
-  //           "Provide either email or phone number, not both"
-  //         );
-  //       }
-
-  //       const user = await User.findOne({
-  //         $or: [
-  //           ...(email ? [{ email: email.toLowerCase() }] : []),
-  //           ...(phoneNumber ? [{ phoneNumber }] : []),
-  //         ],
-  //       })
-  //         .select("+password")
-  //         .session(session);
-
-  //       if (!user) {
-  //         throw new AuthenticationError("Invalid credentials");
-  //       }
-
-  //       const isPasswordValid = await compare(password, user.password);
-  //       if (!isPasswordValid) {
-  //         throw new AuthenticationError("Invalid credentials");
-  //       }
-
-  //       const token = generateToken(user._id.toString(), user.role as ROLE);
-  //       context.res.cookie("token", token, getAuthCookieSettings());
-
-  //       const userObject = user.toObject();
-
-  //       delete (userObject as { password?: string }).password;
-  //       delete (userObject as { __v?: any }).__v;
-
-  //       return {
-  //         user: userObject,
-  //       };
-  //     });
-
-  //     return HttpResponse.send(context.res, result, 200);
-  //   } catch (error) {
-  //     throw error;
-  //   }
-  // },
-
   login: async (context: RequestContext) => {
     try {
       const result = await context.withTransaction(async (session) => {

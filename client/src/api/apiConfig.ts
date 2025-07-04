@@ -15,6 +15,12 @@ const API_ENDPOINTS = {
     HERO_SECTION: `${API_BASE_URL}/api/v1/admin/home/hero-section`,
     UPLOAD_IMAGE: `${API_BASE_URL}/api/v1/upload-image`,
   },
+  SCRAPER: {
+    SCRAPE: `${API_BASE_URL}/api/v1/scraper`,
+    HISTORY: `${API_BASE_URL}/api/v1/scraper/history`,
+    CLEAR: `${API_BASE_URL}/api/v1/scraper/clear`,
+    GET_SCRAPED_DATA: `${API_BASE_URL}/api/v1/scraper/:id`,
+  },
 };
 
 export { API_ENDPOINTS };

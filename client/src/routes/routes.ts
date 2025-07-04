@@ -19,7 +19,7 @@ interface RouteConfig {
 }
 
 export const publicRoutes: RouteConfig[] = [
-  { path: "/", element: Home, fullWidth: true },
+  { path: "/", element: Home },
   { path: "/about", element: About },
 ];
 
