@@ -6,9 +6,7 @@ import { NavbarItemType } from "../../types/navbarTypes";
 import AuthButtons from "../auth/AuthButtons";
 import MobileMenu from "./MobileMenu";
 import { motion } from "framer-motion";
-import { CompanyLogo } from "../logo/CompanyLogo";
 import { useAdminAuth } from "../../hooks/useAdminAuth";
-import logoImage from "../../assets/images/FInal-GHG-Logo.png";
 
 interface iAppNavbarProps {
   items: NavbarItemType[];
@@ -29,13 +27,13 @@ export const Navbar: React.FC<iAppNavbarProps> = ({ items }) => {
             <div className="relative">
               <div className="absolute -inset-1 bg-gradient-to-r from-[#6FFFB4] to-[#3694FF] rounded-full blur opacity-70 group-hover:opacity-100 transition duration-200"></div>
               <div className="relative bg-[#0a101f] rounded-full p-1">
-                <CompanyLogo
+                {/* <CompanyLogo
                   type="image"
                   src={logoImage}
                   alt="webscrapper logo"
                   size="md"
                   className="w-10 h-10"
-                />
+                /> */}
               </div>
             </div>
           </motion.div>

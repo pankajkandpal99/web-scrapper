@@ -7,7 +7,6 @@ import {
   UploadOptions,
   UploadResult,
 } from "../types/file-upload-types.js";
-import { CloudinaryUploadService } from "../services/cloudinary-upload.service.js";
 import path from "path";
 
 const DEFAULT_OPTIONS: UploadOptions = {
@@ -98,22 +97,22 @@ export const handleFileUpload = async (
                 ? `${mergedOptions.cloudinaryFolder}/${mergedOptions.pathStructure}`
                 : mergedOptions.cloudinaryFolder;
 
-              const cloudinaryFile = await CloudinaryUploadService.uploadFile(
-                buffer,
-                {
-                  folder: folderPath,
-                  public_id: uniqueFilename.replace(/\.[^/.]+$/, ""), // Remove extension
-                  resource_type: "auto",
-                  originalFilename: filename,
-                }
-              );
+              // const cloudinaryFile = await CloudinaryUploadService.uploadFile(
+              //   buffer,
+              //   {
+              //     folder: folderPath,
+              //     public_id: uniqueFilename.replace(/\.[^/.]+$/, ""), // Remove extension
+              //     resource_type: "auto",
+              //     originalFilename: filename,
+              //   }
+              // );
 
-              files.push({
-                ...fileInfo,
-                publicUrl: cloudinaryFile.publicUrl,
-                cloudinaryId: cloudinaryFile.cloudinaryId,
-                resourceType: cloudinaryFile.resourceType,
-              });
+              // files.push({
+              //   ...fileInfo,
+              //   publicUrl: cloudinaryFile.publicUrl,
+              //   cloudinaryId: cloudinaryFile.cloudinaryId,
+              //   resourceType: cloudinaryFile.resourceType,
+              // });
             } else {
               // Fallback to local storage (for development or testing)
               const destinationPath = path.resolve(

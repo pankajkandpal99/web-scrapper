@@ -8,7 +8,9 @@ import {
   CardHeader,
   CardTitle,
 } from "../components/ui/card";
-import { clearScrapedData } from "../features/scrapper/scrapper.slice";
+import { resetScraperError } from "../features/scrapper/scrapper.slice";
+import { CheckCircle } from "lucide-react";
+import { Alert } from "../components/ui/alert";
 
 const ScrapeNow = () => {
   const dispatch = useAppDispatch();
@@ -16,7 +18,8 @@ const ScrapeNow = () => {
 
   useEffect(() => {
     return () => {
-      dispatch(clearScrapedData());
+      // dispatch(clearScrapedData());
+      dispatch(resetScraperError());
     };
   }, [dispatch]);
 
@@ -26,7 +29,13 @@ const ScrapeNow = () => {
         <CardHeader>
           <CardTitle>Web Scraper</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-4">
+          {data && (
+            <Alert>
+              <CheckCircle className="h-4 w-4" />
+              <span>Successfully scraped website!</span>
+            </Alert>
+          )}
           <ScraperForm />
           {data && <ScraperResults />}
         </CardContent>

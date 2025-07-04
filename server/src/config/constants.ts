@@ -7,6 +7,7 @@ export enum StatusCodes {
   NOT_FOUND = 404,
   CONFLICT = 409,
   INTERNAL_SERVER_ERROR = 500,
+  REQUEST_TIMEOUT = 408,
 }
 
 export enum ROLE {

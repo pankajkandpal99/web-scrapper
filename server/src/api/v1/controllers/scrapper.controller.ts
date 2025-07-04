@@ -1,38 +1,75 @@
 import { RequestContext } from "../../../middleware/context.js";
 import { HttpResponse } from "../../../utils/service-response.js";
-import { ScrapedData } from "../../../models/scraped-data.model.js";
-import { NotFoundError } from "../../../error-handler/index.js";
-import { scrapeWebsite } from "@/services/scrapper.service.js";
+import { BadRequestError } from "../../../error-handler/index.js";
+import { ScraperService } from "@/services/scrapper.service.js";
 
 export const ScraperController = {
-  scrape: async (context: RequestContext) => {
+  scrapeWebsite: async (context: RequestContext) => {
     try {
-      const { url } = context.body;
-      const userId = context.user?.id;
+      const result = await context.withTransaction(async (session) => {
+        const { url } = context.body;
+        const userId = context.user?.id;
 
-      // Validate URL
-      if (!url || typeof url !== "string") {
-        throw new Error("Invalid URL provided");
-      }
+        if (!userId) {
+          throw new BadRequestError("User authentication required");
+        }
 
-      // Scrape the website
-      const scrapedData = await scrapeWebsite(url);
+        // Rate limiting check (optional - you can implement this based on your needs)
+        // const recentScrapes = await ScrapedData.countDocuments({
+        //   userId,
+        //   createdAt: { $gte: new Date(Date.now() - 60 * 60 * 1000) } // Last hour
+        // });
+        //
+        // if (recentScrapes >= 10) {
+        //   throw new BadRequestError("Rate limit exceeded. Please try again later.");
+        // }
 
-      // Save to database
-      const result = await ScrapedData.create({
-        url,
-        data: scrapedData,
-        userId,
-        createdAt: new Date(),
+        const scrapedData = await ScraperService.scrapeWebsite(url, userId);
+        return scrapedData;
       });
 
       return HttpResponse.send(
         context.res,
         {
-          id: (result._id as string | { toString(): string }).toString(),
-          url: result.url,
-          data: result.data,
-          createdAt: result.createdAt,
+          success: true,
+          data: result,
+          message: "Website scraped successfully",
+        },
+        201
+      );
+    } catch (error) {
+      console.error("error occured while scraping : ", error);
+      throw error;
+    }
+  },
+
+  scrapeMultipleWebsites: async (context: RequestContext) => {
+    try {
+      const result = await context.withTransaction(async (session) => {
+        const { urls } = context.body;
+        const userId = context.user?.id;
+
+        if (!userId) {
+          throw new BadRequestError("User authentication required");
+        }
+
+        if (!urls || !Array.isArray(urls) || urls.length === 0) {
+          throw new BadRequestError("At least one URL is required");
+        }
+
+        if (urls.length > 20) {
+          throw new BadRequestError("Maximum 20 URLs allowed per request");
+        }
+
+        return await ScraperService.scrapeMultipleWebsites(urls, userId);
+      });
+
+      return HttpResponse.send(
+        context.res,
+        {
+          success: true,
+          data: result,
+          message: "Bulk scraping completed",
         },
         201
       );
@@ -41,85 +78,118 @@ export const ScraperController = {
     }
   },
 
-  getHistory: async (context: RequestContext) => {
-    try {
-      const userId = context.user?.id;
-      const query = context.query ?? {};
-      const page = parseInt((query.page as string) ?? "1") || 1;
-      const limit = parseInt((query.limit as string) ?? "10") || 10;
-
-      console.log("Get History userId : ", userId);
-      console.log("Get History query : ", query);
-
-      const results = await ScrapedData.find({ userId })
-        .sort({ createdAt: -1 })
-        .skip((page - 1) * limit)
-        .limit(limit)
-        .lean();
-
-      const total = await ScrapedData.countDocuments({ userId });
-
-      return HttpResponse.send(
-        context.res,
-        {
-          data: results.map((item) => ({
-            id: item._id.toString(),
-            url: item.url,
-            createdAt: item.createdAt,
-          })),
-          meta: {
-            total,
-            page,
-            limit,
-            pages: Math.ceil(total / limit),
-          },
-        },
-        200
-      );
-    } catch (error) {
-      throw error;
-    }
-  },
-
-  clearHistory: async (context: RequestContext) => {
+  getScrapingHistory: async (context: RequestContext) => {
     try {
       const userId = context.user?.id;
 
-      await ScrapedData.deleteMany({ userId });
-
-      return HttpResponse.send(
-        context.res,
-        {
-          message: "Scraping history cleared successfully",
-        },
-        200
-      );
-    } catch (error) {
-      throw error;
-    }
-  },
-
-  getScrapedData: async (context: RequestContext) => {
-    try {
-      const { id } = context.params;
-      const userId = context.user?.id;
-
-      const result = await ScrapedData.findOne({
-        _id: id,
-        userId,
-      }).lean();
-
-      if (!result) {
-        throw new NotFoundError("Scraped data not found");
+      if (!userId) {
+        throw new BadRequestError("User authentication required");
       }
 
+      // const page = parseInt(context.query?.page as string) || 1;
+      // const limit = parseInt(context.query?.limit as string) || 10;
+
+      // Validate pagination parameters
+      // if (page < 1 || limit < 1 || limit > 100) {
+      //   throw new BadRequestError("Invalid pagination parameters");
+      // }
+
+      const result = await ScraperService.getScrapingHistory(userId);
+
       return HttpResponse.send(
         context.res,
         {
-          id: result._id.toString(),
-          url: result.url,
-          data: result.data,
-          createdAt: result.createdAt,
+          success: true,
+          data: result,
+          // pagination: result.pagination,
+          message: "Scraping history retrieved successfully",
+        },
+        200
+      );
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  clearScrapedData: async (context: RequestContext) => {
+    try {
+      const result = await context.withTransaction(async (session) => {
+        const userId = context.user?.id;
+
+        if (!userId) {
+          throw new BadRequestError("User authentication required");
+        }
+
+        const clearResult = await ScraperService.clearScrapedData(userId);
+        return clearResult;
+      });
+
+      return HttpResponse.send(
+        context.res,
+        {
+          success: true,
+          data: result,
+          message: "Scraped data cleared successfully",
+        },
+        200
+      );
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  getScrapedDataById: async (context: RequestContext) => {
+    try {
+      const userId = context.user?.id;
+      const { id } = context.params;
+
+      if (!userId) {
+        throw new BadRequestError("User authentication required");
+      }
+
+      if (!id) {
+        throw new BadRequestError("Scraped data ID is required");
+      }
+
+      const result = await ScraperService.getScrapedDataById(id, userId);
+
+      return HttpResponse.send(
+        context.res,
+        {
+          success: true,
+          data: result,
+          message: "Scraped data retrieved successfully",
+        },
+        200
+      );
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  deleteScrapedItems: async (context: RequestContext) => {
+    try {
+      const result = await context.withTransaction(async (session) => {
+        const userId = context.user?.id;
+        const { ids } = context.body;
+
+        if (!userId) {
+          throw new BadRequestError("User authentication required");
+        }
+
+        if (!ids || !Array.isArray(ids) || ids.length === 0) {
+          throw new BadRequestError("Invalid item IDs provided");
+        }
+
+        return await ScraperService.deleteScrapedItems(ids, userId);
+      });
+
+      return HttpResponse.send(
+        context.res,
+        {
+          success: true,
+          data: result,
+          message: "Items deleted successfully",
         },
         200
       );

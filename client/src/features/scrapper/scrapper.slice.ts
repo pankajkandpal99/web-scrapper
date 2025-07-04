@@ -66,6 +66,51 @@ export const clearScrapedData = createAsyncThunk(
   }
 );
 
+export const bulkRescrape = createAsyncThunk(
+  "scraper/bulkRescrape",
+  async (urls: string[], { dispatch }) => {
+    const results = await Promise.allSettled(
+      urls.map((url) => dispatch(scrapeWebsite(url)))
+    );
+    dispatch(getScrapingHistory());
+    return results;
+  }
+);
+
+export const deleteScrapedItems = createAsyncThunk(
+  "scraper/deleteItems",
+  async (ids: string[], { rejectWithValue }) => {
+    try {
+      await ScraperService.deleteScrapedItems(ids);
+      return ids;
+    } catch (error) {
+      if (error instanceof Error) {
+        return rejectWithValue(error.message);
+      }
+      return rejectWithValue("Failed to delete items");
+    }
+  }
+);
+
+export const scrapeMultipleWebsites = createAsyncThunk(
+  "scraper/bulkScrape",
+  async (urls: string[], { rejectWithValue }) => {
+    try {
+      const cleanedUrls = urls.map((url) => {
+        return url.replace(/^["\\]+|["\\]+$/g, "").trim();
+      });
+
+      const response = await ScraperService.scrapeMultipleWebsites(cleanedUrls);
+      return response;
+    } catch (error) {
+      if (error instanceof Error) {
+        return rejectWithValue(error.message);
+      }
+      return rejectWithValue("Bulk scraping failed");
+    }
+  }
+);
+
 const scraperSlice = createSlice({
   name: "scraper",
   initialState,
@@ -79,7 +124,6 @@ const scraperSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // Scrape Website
       .addCase(scrapeWebsite.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -91,7 +135,7 @@ const scraperSlice = createSlice({
         state.history = [
           { url: action.payload.url, data: action.payload.data },
           ...state.history,
-        ].slice(0, 10); // Keep last 10 items
+        ].slice(0, 100);
       })
       .addCase(scrapeWebsite.rejected, (state, action) => {
         state.loading = false;
@@ -123,6 +167,32 @@ const scraperSlice = createSlice({
         state.currentUrl = null;
       })
       .addCase(clearScrapedData.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+      .addCase(deleteScrapedItems.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(deleteScrapedItems.fulfilled, (state, action) => {
+        state.loading = false;
+        state.history = state.history.filter(
+          (item) => !action.payload.includes(item._id)
+        );
+      })
+      .addCase(deleteScrapedItems.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+      .addCase(scrapeMultipleWebsites.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(scrapeMultipleWebsites.fulfilled, (state, action) => {
+        state.loading = false;
+        state.history = [...action.payload, ...state.history].slice(0, 100);
+      })
+      .addCase(scrapeMultipleWebsites.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       });

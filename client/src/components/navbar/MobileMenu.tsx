@@ -13,8 +13,6 @@ import {
   DrawerPortal,
   DrawerTrigger,
 } from "../ui/drawer";
-import { CompanyLogo } from "../logo/CompanyLogo";
-import logoImage from "../../assets/images/FInal-GHG-Logo.png";
 
 interface MobileMenuProps {
   items: NavbarItemType[];
@@ -61,13 +59,13 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ items }) => {
                   <div className="relative">
                     <div className="absolute -inset-1 bg-gradient-to-r from-[#6FFFB4] to-[#3694FF] rounded-full blur opacity-70" />
                     <div className="relative bg-[#0a101f] rounded-full p-1">
-                      <CompanyLogo
+                      {/* <CompanyLogo
                         type="image"
                         src={logoImage}
                         alt="webscrapper logo"
                         size="md"
                         className="w-8 h-8"
-                      />
+                      /> */}
                     </div>
                   </div>
                   <span className="text-base font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#6FFFB4] to-[#3694FF]">

@@ -15,18 +15,38 @@ const ScraperResults = () => {
     navigator.clipboard.writeText(JSON.stringify(data, null, 2));
   };
 
+  const isBulkResults = Array.isArray(data);
+
   return (
     <div className="mt-6 space-y-4">
       <div className="flex justify-between items-center">
-        <h3 className="text-lg font-medium">Scraping Results</h3>
+        <h3 className="text-lg font-medium">
+          {isBulkResults ? "Bulk Scraping Results" : "Scraping Results"}
+        </h3>
         <Button variant="outline" size="sm" onClick={handleCopy}>
           <Copy className="mr-2 h-4 w-4" />
           Copy JSON
         </Button>
       </div>
-      <pre className="bg-gray-100 dark:bg-gray-800 p-4 rounded-md overflow-auto text-sm text-gray-900">
-        {JSON.stringify(data, null, 2)}
-      </pre>
+
+      <div className="bg-muted/50 p-4 rounded-md">
+        {isBulkResults ? (
+          <div className="space-y-4">
+            {data.map((result, index) => (
+              <div key={index} className="mb-4 pb-4 border-b">
+                <h4 className="font-medium mb-2">URL: {result.url}</h4>
+                <pre className="text-sm overflow-auto max-h-64 whitespace-pre-wrap">
+                  {JSON.stringify(result.data || result, null, 2)}
+                </pre>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <pre className="text-sm overflow-auto max-h-96 whitespace-pre-wrap">
+            {JSON.stringify(data, null, 2)}
+          </pre>
+        )}
+      </div>
     </div>
   );
 };

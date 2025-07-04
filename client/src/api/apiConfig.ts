@@ -17,9 +17,11 @@ const API_ENDPOINTS = {
   },
   SCRAPER: {
     SCRAPE: `${API_BASE_URL}/api/v1/scraper`,
+    BULK_SCRAPE: `${API_BASE_URL}/api/v1/scraper/bulk`,
     HISTORY: `${API_BASE_URL}/api/v1/scraper/history`,
     CLEAR: `${API_BASE_URL}/api/v1/scraper/clear`,
     GET_SCRAPED_DATA: `${API_BASE_URL}/api/v1/scraper/:id`,
+    DELETE_ITEMS: `${API_BASE_URL}/api/v1/scraper/items`,
   },
 };
 

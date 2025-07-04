@@ -24,3 +24,27 @@ export class ConflictError extends AppError {
     super(message, StatusCodes.CONFLICT, "ConflictError", details);
   }
 }
+
+// Add to your existing error classes
+export class BadRequestError extends AppError {
+  constructor(message: string, details?: any) {
+    super(message, StatusCodes.BAD_REQUEST, "BadRequestError", details);
+  }
+}
+
+export class InternalServerError extends AppError {
+  constructor(message: string, details?: any) {
+    super(
+      message,
+      StatusCodes.INTERNAL_SERVER_ERROR,
+      "InternalServerError",
+      details
+    );
+  }
+}
+
+export class TimeoutError extends AppError {
+  constructor(message: string = "Request timed out") {
+    super(message, StatusCodes.REQUEST_TIMEOUT, "TimeoutError");
+  }
+}

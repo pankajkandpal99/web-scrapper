@@ -1,13 +1,22 @@
 import { Router } from "express";
 import { createApiHandler } from "../../../utils/api-factory.js";
-import { scrapeSchema } from "@/schema/scrapper.schema.js";
 import { ScraperController } from "../controllers/scrapper.controller.js";
+import { bulkScrapeSchema, scrapeSchema } from "@/schema/scrapper.schema.js";
 
 export default (router: Router) => {
   router.post(
     "/scraper",
-    createApiHandler(ScraperController.scrape, {
+    createApiHandler(ScraperController.scrapeWebsite, {
       bodySchema: scrapeSchema,
+      useTransaction: true,
+      requireAuth: true,
+    })
+  );
+
+  router.post(
+    "/scraper/bulk",
+    createApiHandler(ScraperController.scrapeMultipleWebsites, {
+      bodySchema: bulkScrapeSchema,
       useTransaction: true,
       requireAuth: true,
     })
@@ -15,7 +24,7 @@ export default (router: Router) => {
 
   router.get(
     "/scraper/history",
-    createApiHandler(ScraperController.getHistory, {
+    createApiHandler(ScraperController.getScrapingHistory, {
       requireAuth: true,
       useTransaction: true,
     })
@@ -23,7 +32,7 @@ export default (router: Router) => {
 
   router.delete(
     "/scraper/clear",
-    createApiHandler(ScraperController.clearHistory, {
+    createApiHandler(ScraperController.clearScrapedData, {
       requireAuth: true,
       useTransaction: true,
     })
@@ -31,7 +40,15 @@ export default (router: Router) => {
 
   router.get(
     "/scraper/:id",
-    createApiHandler(ScraperController.getScrapedData, {
+    createApiHandler(ScraperController.getScrapedDataById, {
+      requireAuth: true,
+      useTransaction: true,
+    })
+  );
+
+  router.delete(
+    "/scraper/items",
+    createApiHandler(ScraperController.deleteScrapedItems, {
       requireAuth: true,
       useTransaction: true,
     })

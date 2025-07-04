@@ -12,10 +12,6 @@ const envSchema = z.object({
   COOKIE_DOMAIN: z.string(),
   ALLOWED_ORIGINS: z.string(),
   BASE_URL: z.string(),
-
-  CLOUDINARY_CLOUD_NAME: z.string(),
-  CLOUDINARY_API_KEY: z.string(),
-  CLOUDINARY_API_SECRET: z.string(),
 });
 
 export type Env = z.infer<typeof envSchema>;
@@ -30,10 +26,6 @@ export const env: Env = (() => {
       COOKIE_DOMAIN: process.env.COOKIE_DOMAIN,
       ALLOWED_ORIGINS: process.env.ALLOWED_ORIGINS || "",
       BASE_URL: process.env.BASE_URL || "http://localhost:8800",
-
-      CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME!,
-      CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY!,
-      CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET!,
     });
   } catch (error) {
     if (error instanceof z.ZodError) {
