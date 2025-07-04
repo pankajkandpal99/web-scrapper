@@ -113,18 +113,46 @@ Running the Application
     npm run dev
 
 
-Future Enhancements
-    Proxy Support: Rotating proxies for large-scale scraping
-    Scheduled Scraping: Automate recurring scrapes
-    Advanced Data Processing: NLP analysis of scraped content
-    Visualizations: Charts/graphs for scraped data
-    API Documentation: Swagger/OpenAPI specs
-    Rate Limiting: Protect against abuse
-    User Roles: Admin vs regular user privileges
+## 🚀 Future Enhancements
 
-Contributing
-    Fork the project
-    Create your feature branch (git checkout -b feature/AmazingFeature)
-    Commit your changes (git commit -m 'Add some AmazingFeature')
-    Push to the branch (git push origin feature/AmazingFeature)
-    Open a Pull Request
+- **Proxy Support**: Rotating proxies for large-scale scraping  
+- **Scheduled Scraping**: Automate recurring scrapes  
+- **Advanced Data Processing**: NLP analysis of scraped content  
+- **Visualizations**: Charts/graphs for scraped data  
+- **API Documentation**: Swagger/OpenAPI specs  
+- **Rate Limiting**: Protect against abuse  
+- **User Roles**: Admin vs regular user privileges  
+
+---
+
+## 🤝 Contributing
+
+1. **Fork** the project  
+2. **Create your feature branch**  
+   ```bash
+   git checkout -b feature/AmazingFeature
+3. Commit your changes
+   git commit -m "Add some AmazingFeature"
+4. Push to the branch
+   git push origin feature/AmazingFeature
+5. Open a Pull Request
+    
+---
+
+### ✅ Output on GitHub will look like:
+
+#### 🚀 Future Enhancements  
+- Proxy Support: Rotating proxies...  
+- Scheduled Scraping...  
+*(and so on)*
+
+#### 🤝 Contributing  
+1. Fork  
+2. Create branch  
+3. Commit  
+4. Push  
+5. PR
+
+---
+
+Let me know if you also want a `screenshots` section or badges like `Live Demo`, `Tech Used`, etc. 📸✨
